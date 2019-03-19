@@ -1,0 +1,6 @@
+== Solutions to OpenShift Advanced on 3.11
+
+Sharing solutions etc for the 2018-03-18 RDU Class.
+
+NOTE: If this is useful please clone, I may delete this over time as it will drift away from the course content.
+

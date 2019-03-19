@@ -1,0 +1,111 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: 2018-07-17T02:39:15Z
+  generation: 4
+  labels:
+    app: logtofile
+  name: logtofile
+  namespace: tok-logging
+  resourceVersion: "612520"
+  selfLink: /apis/apps.openshift.io/v1/namespaces/tok-logging/deploymentconfigs/logtofile
+  uid: 98b822c5-896a-11e8-a6b1-06f5cce26774
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: logtofile
+    deploymentconfig: logtofile
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        app: logtofile
+        deploymentconfig: logtofile
+    spec:
+      containers:
+      - args:
+        - /bin/sh
+        - -c
+        - sleep 5 && tail -n+1 -f /tmp/datelog.txt
+        image: docker.io/busybox:latest
+        imagePullPolicy: Always
+        name: logging-sidecar
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+      - image: docker.io/wkulhanek/logtofile@sha256:21d3474f5454d35a27abd6d237412e68e790697d5ab720fbeff5f23b0351441e
+        imagePullPolicy: Always
+        name: logtofile
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: tmp
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - logtofile
+      from:
+        kind: ImageStreamTag
+        name: logtofile:latest
+        namespace: tok-logging
+      lastTriggeredImage: docker.io/wkulhanek/logtofile@sha256:21d3474f5454d35a27abd6d237412e68e790697d5ab720fbeff5f23b0351441e
+    type: ImageChange
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: 2018-07-17T02:39:31Z
+    lastUpdateTime: 2018-07-17T02:39:31Z
+    message: Deployment config has minimum availability.
+    status: "True"
+    type: Available
+  - lastTransitionTime: 2018-07-17T02:51:59Z
+    lastUpdateTime: 2018-07-17T02:51:59Z
+    message: replication controller "logtofile-3" is progressing
+    reason: ReplicationControllerUpdated
+    status: "True"
+    type: Progressing
+  details:
+    causes:
+    - type: ConfigChange
+    message: config change
+  latestVersion: 3
+  observedGeneration: 4
+  readyReplicas: 1
+  replicas: 2
+  unavailableReplicas: 1
+  updatedReplicas: 1
